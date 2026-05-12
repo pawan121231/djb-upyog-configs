@@ -201,7 +201,7 @@ serviceMaps:
 
       - jsonPath: $.Property.id
 
-      - jsonPath: $.Property.address.doorNo
+      - jsonPath: $.Property.address.houseNo
 
       - jsonPath: $.Property.address.plotNo
 
