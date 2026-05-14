@@ -6,7 +6,7 @@ serviceMaps:
       fromTopic: create-water-tanker-booking-with-profile
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO public.upyog_rs_water_tanker_booking_details(booking_id, booking_no, tenant_id, address_detail_id, mobile_number, tanker_type, water_type, tanker_quantity, water_quantity, description, applicant_uuid, delivery_date, delivery_time, extra_charge, vendor_id, vehicle_id, driver_id, vehicle_type, vehicle_capacity, booking_createdby, booking_status, locality_code, createdby, lastModifiedby, createdtime, lastmodifiedtime, applicant_id, filling_point_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::DATE, ?::TIME, ?, ?, ?, ?, ?, ?, LEFT(?,64), ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO public.upyog_rs_water_tanker_booking_details(booking_id, booking_no, tenant_id, address_detail_id, mobile_number, tanker_type, water_type, tanker_quantity, water_quantity, description, applicant_uuid, delivery_date, delivery_time, extra_charge, vendor_id, vehicle_id, driver_id, vehicle_type, vehicle_capacity, booking_createdby, booking_status, locality_code, createdby, lastModifiedby, createdtime, lastmodifiedtime, applicant_id, filling_point_id,application_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::DATE, ?::TIME, ?, ?, ?, ?, ?, ?, LEFT(?,64), ?, ?, ?, ?, ?, ?, ?, ?,?);
           basePath: waterTankerBookingDetail
           jsonMaps:
             - jsonPath: $.waterTankerBookingDetail.bookingId
@@ -37,6 +37,7 @@ serviceMaps:
             - jsonPath: $.waterTankerBookingDetail.auditDetails.lastModifiedTime
             - jsonPath: $.waterTankerBookingDetail.applicantId
             - jsonPath: $.waterTankerBookingDetail.fillingPointId
+            - jsonPath: $.waterTankerBookingDetail.applicationType
 
         - query: INSERT INTO public.upyog_rs_water_tanker_booking_details_auditdetails SELECT * FROM public.upyog_rs_water_tanker_booking_details WHERE booking_id = ?;
           basePath: waterTankerBookingDetail
@@ -48,7 +49,7 @@ serviceMaps:
       fromTopic: create-water-tanker-booking
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO public.upyog_rs_water_tanker_booking_details(booking_id, booking_no, tenant_id, address_detail_id, mobile_number, tanker_type, water_type, tanker_quantity, water_quantity, description, applicant_uuid, delivery_date, delivery_time, extra_charge, vendor_id, vehicle_id, driver_id, vehicle_type, vehicle_capacity, booking_createdby, booking_status, locality_code,wt_file_store_id, createdby, lastModifiedby, createdtime, lastmodifiedtime,applicant_id,filling_point_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::DATE, ?::TIME, ?, ?, ?, ?, ?, ?, LEFT(?,64), ?, ?, ?, ?, ?, ?,?,?,?)
+        - query: INSERT INTO public.upyog_rs_water_tanker_booking_details(booking_id, booking_no, tenant_id, address_detail_id, mobile_number, tanker_type, water_type, tanker_quantity, water_quantity, description, applicant_uuid, delivery_date, delivery_time, extra_charge, vendor_id, vehicle_id, driver_id, vehicle_type, vehicle_capacity, booking_createdby, booking_status, locality_code,wt_file_store_id, createdby, lastModifiedby, createdtime, lastmodifiedtime,applicant_id,filling_point_id,application_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::DATE, ?::TIME, ?, ?, ?, ?, ?, ?, LEFT(?,64), ?, ?, ?, ?, ?, ?,?,?,?,?)
             ON CONFLICT (booking_id)
             DO UPDATE SET
             booking_no = EXCLUDED.booking_no,
@@ -109,13 +110,13 @@ serviceMaps:
             - jsonPath: $.waterTankerBookingDetail.auditDetails.lastModifiedTime
             - jsonPath: $.waterTankerBookingDetail.applicantId
             - jsonPath: $.waterTankerBookingDetail.fillingPointId
-
+            - jsonPath: $.waterTankerBookingDetail.applicationType
         - query: |
                           INSERT INTO public.upyog_rs_water_tanker_applicant_details(
                           applicant_id, booking_id, name, mobile_number, email_id, alternate_number,
-                          createdby, lastModifiedby, createdtime, lastmodifiedtime
+                          createdby, lastModifiedby, createdtime, lastmodifiedtime,type,fixed_point_id
                           )
-                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                           ON CONFLICT (applicant_id)
                           DO UPDATE SET
                           name = EXCLUDED.name,
@@ -123,7 +124,9 @@ serviceMaps:
                           email_id = EXCLUDED.email_id,
                           alternate_number = EXCLUDED.alternate_number,
                           lastModifiedby = EXCLUDED.lastModifiedby,
-                          lastmodifiedtime = EXCLUDED.lastmodifiedtime;
+                          lastmodifiedtime = EXCLUDED.lastmodifiedtime,
+                          type = EXCLUDED.type,
+                          fixed_point_id = EXCLUDED.fixed_point_id;
           basePath: waterTankerBookingDetail.applicantDetail
           jsonMaps:
             - jsonPath: $.waterTankerBookingDetail.applicantDetail.applicantId
@@ -136,6 +139,8 @@ serviceMaps:
             - jsonPath: $.waterTankerBookingDetail.auditDetails.lastModifiedBy
             - jsonPath: $.waterTankerBookingDetail.auditDetails.createdTime
             - jsonPath: $.waterTankerBookingDetail.auditDetails.lastModifiedTime
+            - jsonPath: $.waterTankerBookingDetail.applicantDetail.type
+            - jsonPath: $.waterTankerBookingDetail.applicantDetail.fixedPointId
 
         - query: |
               INSERT INTO public.upyog_rs_water_tanker_address_details(
@@ -357,7 +362,8 @@ serviceMaps:
       fromTopic: update-water-tanker-booking
       isTransaction: true
       queryMaps:
-        - query: UPDATE public.upyog_rs_water_tanker_booking_details SET booking_status = ?, vendor_id = ?, vehicle_id = ?, driver_id = ?, payment_receipt_filestore_id = ?, createdby = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE booking_id = ?;
+        - query: UPDATE public.upyog_rs_water_tanker_booking_details SET booking_status = ?, vendor_id = ?, vehicle_id = ?, driver_id = ?, payment_receipt_filestore_id = ?, createdby = ?, lastmodifiedby = ?, lastmodifiedtime = ?, tanker_quantity=?,water_quantity=?,
+               delivery_date = ?::date, delivery_time = ?::time, vehicle_capacity=?, filling_point_id = ?, vehicle_type=? WHERE booking_id = ?;
           basePath: waterTankerBookingDetail
           jsonMaps:
             - jsonPath: $.waterTankerBookingDetail.bookingStatus
@@ -368,7 +374,34 @@ serviceMaps:
             - jsonPath: $.waterTankerBookingDetail.auditDetails.createdBy
             - jsonPath: $.waterTankerBookingDetail.auditDetails.lastModifiedBy
             - jsonPath: $.waterTankerBookingDetail.auditDetails.lastModifiedTime
+            - jsonPath: $.waterTankerBookingDetail.tankerQuantity
+            - jsonPath: $.waterTankerBookingDetail.waterQuantity
+            - jsonPath: $.waterTankerBookingDetail.deliveryDate
+            - jsonPath: $.waterTankerBookingDetail.deliveryTime
+            - jsonPath: $.waterTankerBookingDetail.vehicleCapacity
+            - jsonPath: $.waterTankerBookingDetail.fillingPointId
+            - jsonPath: $.waterTankerBookingDetail.vehicleType
             - jsonPath: $.waterTankerBookingDetail.bookingId
+
+        - query: UPDATE public.upyog_rs_water_tanker_address_details SET house_no=?, address_line_1=?, address_line_2=?, street_name=?, landmark=?, city=?, city_code=?, locality=?, locality_code=?, pincode=?, latitude=?, longitude=?, ward=?, zone=?, constituency=? WHERE applicant_id=?;
+          basePath: waterTankerBookingDetail.address
+          jsonMaps:
+            - jsonPath: $.waterTankerBookingDetail.address.houseNo
+            - jsonPath: $.waterTankerBookingDetail.address.addressLine1
+            - jsonPath: $.waterTankerBookingDetail.address.addressLine2
+            - jsonPath: $.waterTankerBookingDetail.address.streetName
+            - jsonPath: $.waterTankerBookingDetail.address.landmark
+            - jsonPath: $.waterTankerBookingDetail.address.city
+            - jsonPath: $.waterTankerBookingDetail.address.cityCode
+            - jsonPath: $.waterTankerBookingDetail.address.locality
+            - jsonPath: $.waterTankerBookingDetail.address.localityCode
+            - jsonPath: $.waterTankerBookingDetail.address.pincode
+            - jsonPath: $.waterTankerBookingDetail.address.latitude
+            - jsonPath: $.waterTankerBookingDetail.address.longitude
+            - jsonPath: $.waterTankerBookingDetail.address.ward
+            - jsonPath: $.waterTankerBookingDetail.address.zone
+            - jsonPath: $.waterTankerBookingDetail.address.constituency
+            - jsonPath: $.waterTankerBookingDetail.address.applicantId
 
         - query: INSERT INTO public.upyog_rs_water_tanker_booking_details_auditdetails SELECT * FROM public.upyog_rs_water_tanker_booking_details WHERE booking_id = ?;
           basePath: waterTankerBookingDetail
@@ -511,13 +544,12 @@ serviceMaps:
       fromTopic: save-filling-point
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO public.upyog_rs_water_tanker_filling_point(id, tenant_id, filling_point_name, emergency_name, ee_name, ee_email, ee_mobile, ae_name, ae_email, ae_mobile, je_name, je_email, je_mobile, createdby, lastmodifiedby, createdtime, lastmodifiedtime, filling_point_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO public.upyog_rs_water_tanker_filling_point(id, tenant_id, filling_point_name, ee_name, ee_email, ee_mobile, ae_name, ae_email, ae_mobile, je_name, je_email, je_mobile, createdby, lastmodifiedby, createdtime, lastmodifiedtime, filling_point_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: fillingPoint
           jsonMaps:
             - jsonPath: $.fillingPoint.id
             - jsonPath: $.fillingPoint.tenantId
             - jsonPath: $.fillingPoint.fillingPointName
-            - jsonPath: $.fillingPoint.emergencyName
             - jsonPath: $.fillingPoint.eeName
             - jsonPath: $.fillingPoint.eeEmail
             - jsonPath: $.fillingPoint.eeMobile
@@ -583,9 +615,10 @@ serviceMaps:
               createdby,
               lastmodifiedby,
               createdtime,
-              lastmodifiedtime
+              lastmodifiedtime,
+              filling_point_id
             ) VALUES (
-              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
             )
           basePath: fixedPointDetailsList.*
           jsonMaps:
@@ -608,6 +641,7 @@ serviceMaps:
             - jsonPath: $.fixedPointDetailsList.*.audit_details.lastModifiedBy
             - jsonPath: $.fixedPointDetailsList.*.audit_details.createdTime
             - jsonPath: $.fixedPointDetailsList.*.audit_details.lastModifiedTime
+            - jsonPath: $.fixedPointDetailsList.*.fillingPointId
 
 
     - version: 1.0
@@ -631,7 +665,8 @@ serviceMaps:
               remarks = ?,
               vehicle_id = ?,
               lastmodifiedby = ?,
-              lastmodifiedtime = ?
+              lastmodifiedtime = ?,
+              filling_point_id = ?
             WHERE system_assigned_schedule_id = ?
           basePath: fixedPointDetailsList.*
           jsonMaps:
@@ -650,6 +685,7 @@ serviceMaps:
             - jsonPath: $.fixedPointDetailsList.*.audit_details.lastModifiedBy
             - jsonPath: $.fixedPointDetailsList.*.audit_details.lastModifiedTime
             - jsonPath: $.fixedPointDetailsList.*.system_assigned_schedule_id
+            - jsonPath: $.fixedPointDetailsList.*.fillingPointId
 
 
     - version: 1.0

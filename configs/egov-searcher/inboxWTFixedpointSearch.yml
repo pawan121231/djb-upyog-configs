@@ -1,64 +1,84 @@
 SearchDefinitions:
-  moduleName: request-service.water_tanker_fixedpoint
+  moduleName: request-service.watertanker_fixedpoint
   summary: Water Tanker Fixed Point Inbox API
   version: 1.0.0
 
   definitions:
-    - name: inboxWTFixedPointSearch
+    - name: inboxWTFixedPointSearchdesc
       query:
         baseQuery: |
           SELECT row_to_json(result) FROM (
-            SELECT DISTINCT ad.booking_id, pi.createdtime
-            FROM upyog_rs_water_tanker_booking_details ad
-            INNER JOIN eg_wf_processinstance_v2 pi 
-              ON pi.businessid = ad.booking_no
-            LEFT JOIN eg_wf_assignee_v2 assg 
-              ON pi.id = assg.processinstanceid
-            WHERE ad.fixed_point_id IS NOT NULL
-            $where
-            AND pi.createdtime IN (
-              SELECT MAX(wf.createdtime)
-              FROM eg_wf_processinstance_v2 wf
-              WHERE wf.businessid = ad.booking_no
-              AND wf.businessservice = 'watertanker-fixedpoint'
-              GROUP BY wf.businessid
-            )
-            ORDER BY pi.createdtime DESC $pagination
+            SELECT 
+                data.booking_no,
+                data.createdtime,
+                count_table.total_count
+            FROM (
+                SELECT DISTINCT ON (pi.businessid)
+                    pi.businessid AS booking_no,
+                    pi.createdtime
+                FROM eg_wf_processinstance_v2 pi
+                LEFT JOIN upyog_rs_water_tanker_booking_details urstbd
+                    ON pi.businessid = urstbd.booking_no
+                LEFT JOIN eg_wf_assignee_v2 assg
+                    ON pi.id = assg.processinstanceid
+
+                WHERE pi.businessservice = 'watertanker-fixedpoint'
+
+                AND (:tenantId IS NULL OR urstbd.tenant_id = :tenantId)
+                AND (NULLIF(TRIM(:mobileNumber),'') IS NULL OR urstbd.mobile_number = TRIM(:mobileNumber))
+                AND (NULLIF(TRIM(:bookingNo),'') IS NULL OR urstbd.booking_no = TRIM(:bookingNo))
+                AND (NULLIF(TRIM(:fromDate), '') IS NULL OR pi.createdtime >= CAST(TRIM(:fromDate) AS BIGINT))
+                AND (NULLIF(TRIM(:toDate), '') IS NULL OR pi.createdtime <= CAST(TRIM(:toDate) AS BIGINT))
+                ORDER BY pi.businessid DESC
+                LIMIT :limit OFFSET :offset
+            ) data
+
+            CROSS JOIN (
+                SELECT COUNT(DISTINCT pi.businessid) AS total_count
+                FROM eg_wf_processinstance_v2 pi
+                LEFT JOIN upyog_rs_water_tanker_booking_details urstbd
+                    ON pi.businessid = urstbd.booking_no
+
+                WHERE pi.businessservice = 'watertanker-fixedpoint'
+
+                AND (:tenantId IS NULL OR urstbd.tenant_id = :tenantId)
+                AND (NULLIF(TRIM(:mobileNumber),'') IS NULL OR urstbd.mobile_number = TRIM(:mobileNumber))
+                AND (NULLIF(TRIM(:bookingNo),'') IS NULL OR urstbd.booking_no = TRIM(:bookingNo))
+                AND (NULLIF(TRIM(:fromDate), '') IS NULL OR pi.createdtime >= CAST(TRIM(:fromDate) AS BIGINT))
+                AND (NULLIF(TRIM(:toDate), '') IS NULL OR pi.createdtime <= CAST(TRIM(:toDate) AS BIGINT))
+            ) count_table
           ) result
 
       searchParams:
         condition: AND
         params:
-          - name: ad.booking_id
+          - name: tenantId
+            isMandatory: true
+            jsonPath: $.searchCriteria.tenantId
+
+          - name: mobileNumber
             isMandatory: false
-            jsonPath: $.searchCriteria.bookingId
+            jsonPath: $.searchCriteria.mobileNumber
 
-          - name: pi.status
+          - name: bookingNo
             isMandatory: false
-            jsonPath: $.searchCriteria.status
+            jsonPath: $.searchCriteria.bookingNo
 
-          - name: assg.assignee
-            isMandatory: false
-            jsonPath: $.searchCriteria.assignee
-
-#          - name: pi.businessservice
-#            isMandatory: false
-#            jsonPath: $.searchCriteria.businessservice
-
-          #  DATE FILTER
-          - name: pi.createdtime
+          - name: fromDate
             isMandatory: false
             jsonPath: $.searchCriteria.fromDate
-            operator: ">="
 
-          - name: pi.createdtime
+          - name: toDate
             isMandatory: false
             jsonPath: $.searchCriteria.toDate
-            operator: "<="
 
-        pagination:
-          noOfRecords: $.searchCriteria.noOfRecords
-          offset: $.searchCriteria.offset
+          - name: limit
+            isMandatory: false
+            jsonPath: $.searchCriteria.noOfRecords
+
+          - name: offset
+            isMandatory: false
+            jsonPath: $.searchCriteria.offset
 
       output:
         jsonFormat: {"ResponseInfo": {},"waterTankerBookingDetail": []}

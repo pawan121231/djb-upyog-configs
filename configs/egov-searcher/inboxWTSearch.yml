@@ -2,100 +2,150 @@ SearchDefinitions:
   moduleName: request-service.water_tanker
   summary: Water Tanker Request Service Inbox API
   version: 1.0.0
+
   definitions:
+
     - name: inboxWTSearch
       query:
-        baseQuery: Select row_to_json(result) from
-          (
-          select DISTINCT(urstbd.booking_no),pi.createdtime from 
-          upyog_rs_water_tanker_booking_details as urstbd
-          INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = urstbd.booking_no
-          LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid
-          $where
-          AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = urstbd.booking_no GROUP BY wf.businessid)
-          order by pi.createdtime asc $pagination
+        baseQuery: |
+          SELECT row_to_json(result) FROM (
+              SELECT 
+                  data.booking_no,
+                  data.createdtime,
+                  count_table.total_count
+              FROM (
+                  SELECT DISTINCT ON (urstbd.booking_no)
+                      urstbd.booking_no AS booking_no,
+                      pi.createdtime
+                  FROM upyog_rs_water_tanker_booking_details urstbd
+                  INNER JOIN eg_wf_processinstance_v2 pi
+                      ON pi.businessid = urstbd.booking_no
+                  LEFT JOIN eg_wf_assignee_v2 assg
+                      ON pi.id = assg.processinstanceid
+
+                  WHERE pi.businessservice = 'watertanker'
+                  AND (:tenantId IS NULL OR urstbd.tenant_id = :tenantId)
+                  AND (NULLIF(TRIM(:mobileNumber), '') IS NULL OR urstbd.mobile_number = TRIM(:mobileNumber))
+                  AND (NULLIF(TRIM(:bookingNo),'') IS NULL OR urstbd.booking_no = TRIM(:bookingNo))
+                  ORDER BY urstbd.booking_no ASC
+                  LIMIT :limit OFFSET :offset
+              ) data
+
+              CROSS JOIN (
+                  SELECT COUNT(DISTINCT urstbd.booking_no) AS total_count
+                  FROM upyog_rs_water_tanker_booking_details urstbd
+                  INNER JOIN eg_wf_processinstance_v2 pi
+                      ON pi.businessid = urstbd.booking_no
+                  LEFT JOIN eg_wf_assignee_v2 assg
+                      ON pi.id = assg.processinstanceid
+
+                  WHERE pi.businessservice = 'watertanker'
+                  AND (:tenantId IS NULL OR urstbd.tenant_id = :tenantId)
+                  AND (NULLIF(TRIM(:mobileNumber), '') IS NULL OR urstbd.mobile_number = TRIM(:mobileNumber))
+                  AND (NULLIF(TRIM(:bookingNo),'') IS NULL OR urstbd.booking_no = TRIM(:bookingNo))
+              ) count_table
           ) result
-        groupBy:
-        orderBy:
+
       searchParams:
         condition: AND
         params:
-          - name: urstbd.tenant_id
+          - name: tenantId
             isMandatory: true
             jsonPath: $.searchCriteria.tenantId
-          - name: urstbd.booking_no
+
+          - name: mobileNumber
+            isMandatory: false
+            jsonPath: $.searchCriteria.mobileNumber
+
+
+          - name: bookingNo
             isMandatory: false
             jsonPath: $.searchCriteria.bookingNo
-          - name: pi.status
+
+
+          - name: limit
             isMandatory: false
-            jsonPath: $.searchCriteria.status
-          - name: assg.assignee
+            jsonPath: $.searchCriteria.noOfRecords
+
+          - name: offset
             isMandatory: false
-            jsonPath: $.searchCriteria.assignee
-          - name: pi.businessservice
-            isMandatory: false
-            jsonPath: $.searchCriteria.businessservice
-#          - name: urstbd.createdtime
-#            isMandatory: false
-#            jsonPath: $.searchCriteria.fromDate
-#            operator: ">="
-#          - name: urstbd.createdtime
-#            isMandatory: false
-#            jsonPath: $.searchCriteria.toDate
-#            operator: "<="
-        pagination:
-          noOfRecords: $.searchCriteria.noOfRecords
-          offset: $.searchCriteria.offset
+            jsonPath: $.searchCriteria.offset
 
       output:
         jsonFormat: {"ResponseInfo": {},"waterTankerBookingDetail": []}
         outJsonPath: $.waterTankerBookingDetail
         responseInfoPath: $.ResponseInfo
+
+
+
     - name: inboxWTSearchdesc
       query:
-        baseQuery: Select row_to_json(result) from
-          (
-          select DISTINCT(urstbd.booking_no),pi.createdtime from 
-          upyog_rs_water_tanker_booking_details as urstbd
-          INNER JOIN eg_wf_processinstance_v2 pi ON pi.businessid = urstbd.booking_no
-          LEFT JOIN eg_wf_assignee_v2 assg ON pi.id = assg.processinstanceid
-          $where
-          AND pi.createdtime IN (select max(createdtime) from eg_wf_processinstance_v2 wf where wf.businessid = urstbd.booking_no GROUP BY wf.businessid)
-          order by pi.createdtime desc $pagination
+        baseQuery: |
+          SELECT row_to_json(result) FROM (
+              SELECT 
+                  data.booking_no,
+                  data.createdtime,
+                  count_table.total_count
+              FROM (
+                  SELECT DISTINCT ON (pi.businessid)
+                      pi.businessid AS booking_no,
+                      pi.createdtime
+                  FROM eg_wf_processinstance_v2 pi
+                  LEFT JOIN upyog_rs_water_tanker_booking_details urstbd
+                      ON pi.businessid = urstbd.booking_no
+                  LEFT JOIN eg_wf_assignee_v2 assg
+                      ON pi.id = assg.processinstanceid
+
+                  WHERE pi.businessservice = 'watertanker'
+                  AND (:tenantId IS NULL OR urstbd.tenant_id = :tenantId)
+                  AND (NULLIF(TRIM(:mobileNumber), '') IS NULL OR urstbd.mobile_number = TRIM(:mobileNumber))
+                  AND (NULLIF(TRIM(:bookingNo),'') IS NULL OR urstbd.booking_no = TRIM(:bookingNo))
+                  ORDER BY pi.businessid DESC
+                  LIMIT :limit OFFSET :offset
+              ) data
+
+              CROSS JOIN (
+                  SELECT COUNT(DISTINCT urstbd.booking_no) AS total_count
+                  FROM upyog_rs_water_tanker_booking_details urstbd
+                  INNER JOIN eg_wf_processinstance_v2 pi
+                      ON pi.businessid = urstbd.booking_no
+                  LEFT JOIN eg_wf_assignee_v2 assg
+                      ON pi.id = assg.processinstanceid
+
+                  WHERE pi.businessservice = 'watertanker'
+                  AND (:tenantId IS NULL OR urstbd.tenant_id = :tenantId)
+                  AND (NULLIF(TRIM(:mobileNumber), '') IS NULL OR urstbd.mobile_number = TRIM(:mobileNumber))
+                  AND (NULLIF(TRIM(:bookingNo),'') IS NULL OR urstbd.booking_no = TRIM(:bookingNo))
+              ) count_table
           ) result
-        groupBy:
-        orderBy:
+
       searchParams:
         condition: AND
         params:
-          - name: urstbd.tenant_id
+          - name: tenantId
             isMandatory: true
             jsonPath: $.searchCriteria.tenantId
-          - name: urstbd.booking_no
+
+          - name: mobileNumber
+            isMandatory: false
+            jsonPath: $.searchCriteria.mobileNumber
+
+
+          - name: bookingNo
             isMandatory: false
             jsonPath: $.searchCriteria.bookingNo
-          - name: pi.status
+
+          - name: limit
             isMandatory: false
-            jsonPath: $.searchCriteria.status
-          - name: assg.assignee
+            jsonPath: $.searchCriteria.noOfRecords
+
+          - name: offset
             isMandatory: false
-            jsonPath: $.searchCriteria.assignee
-          - name: pi.businessservice
-            isMandatory: false
-            jsonPath: $.searchCriteria.businessservice
-#          - name: urstbd.createdtime
-#            isMandatory: false
-#            jsonPath: $.searchCriteria.fromDate
-#            operator: ">="
-#          - name: urstbd.createdtime
-#            isMandatory: false
-#            jsonPath: $.searchCriteria.toDate
-#            operator: "<="
-        pagination:
-          noOfRecords: $.searchCriteria.noOfRecords
-          offset: $.searchCriteria.offset
+            jsonPath: $.searchCriteria.offset
 
       output:
         jsonFormat: {"ResponseInfo": {},"waterTankerBookingDetail": []}
         outJsonPath: $.waterTankerBookingDetail
         responseInfoPath: $.ResponseInfo
+
+
