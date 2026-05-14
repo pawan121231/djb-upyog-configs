@@ -7,7 +7,7 @@ serviceMaps:
    isTransaction: true
    queryMaps:
 
-       - query: INSERT INTO eg_vendor( id, name, tenantid, additionaldetails, owner_id, description, source, status,agencyType,paymentPreference,createdby, lastmodifiedby, createdtime, lastmodifiedtime,vendor_idgen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );
+       - query: INSERT INTO eg_vendor( id, name, tenantid, additionaldetails, owner_id, description, source, status,agencyType,paymentPreference,zone_ids, cluster_ids, contract_start_date, contract_end_date, createdby, lastmodifiedby, createdtime, lastmodifiedtime,vendor_idgen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );
          basePath: vendor
          jsonMaps:
           - jsonPath: $.vendor.id
@@ -31,6 +31,18 @@ serviceMaps:
           - jsonPath: $.vendor.agencyType
           
           - jsonPath: $.vendor.paymentPreference
+
+          - jsonPath: $.vendor.zoneIds
+            type: JSON
+            dbType: JSONB
+
+          - jsonPath: $.vendor.clusterIds
+            type: JSON
+            dbType: JSONB
+
+          - jsonPath: $.vendor.contractStartDate
+
+          - jsonPath: $.vendor.contractEndDate
 
           - jsonPath: $.vendor.auditDetails.createdBy
 
@@ -133,7 +145,7 @@ serviceMaps:
          jsonMaps:
           - jsonPath: $.vendor.id
           
-       - query: UPDATE eg_vendor SET name=?, tenantid=?, additionaldetails=?, owner_id=?, description=?, source=?, status=?, agencyType=?, paymentPreference=?, createdby=?, lastmodifiedby=?, createdtime=?, lastmodifiedtime=? WHERE id=?
+       - query: UPDATE eg_vendor SET name=?, tenantid=?, additionaldetails=?, owner_id=?, description=?, source=?, status=?, agencyType=?, paymentPreference=?, zone_ids=?, cluster_ids=?, contract_start_date=?, contract_end_date=?, createdby=?, lastmodifiedby=?, createdtime=?, lastmodifiedtime=? WHERE id=?
          basePath: vendor
          jsonMaps:
           - jsonPath: $.vendor.name
@@ -147,6 +159,14 @@ serviceMaps:
           - jsonPath: $.vendor.status
           - jsonPath: $.vendor.agencyType
           - jsonPath: $.vendor.paymentPreference
+          - jsonPath: $.vendor.zoneIds
+            type: JSON
+            dbType: JSONB
+          - jsonPath: $.vendor.clusterIds
+            type: JSON
+            dbType: JSONB
+          - jsonPath: $.vendor.contractStartDate
+          - jsonPath: $.vendor.contractEndDate
           - jsonPath: $.vendor.auditDetails.createdBy
           - jsonPath: $.vendor.auditDetails.lastModifiedBy
           - jsonPath: $.vendor.auditDetails.createdTime
@@ -232,7 +252,7 @@ serviceMaps:
          jsonMaps:
           - jsonPath: $.vendor.id
           
-       - query: UPDATE eg_vendor SET name=?, tenantid=?, additionaldetails=?, owner_id=?, description=?, source=?, status=?, agencyType=?, paymentPreference=?, createdby=?, lastmodifiedby=?, createdtime=?, lastmodifiedtime=? WHERE id=?
+       - query: UPDATE eg_vendor SET name=?, tenantid=?, additionaldetails=?, owner_id=?, description=?, source=?, status=?, agencyType=?, paymentPreference=?,zone_ids=?, cluster_ids=?, contract_start_date=?, contract_end_date=?, createdby=?, lastmodifiedby=?, createdtime=?, lastmodifiedtime=? WHERE id=?
          basePath: vendor
          jsonMaps:
           - jsonPath: $.vendor.name
@@ -246,6 +266,14 @@ serviceMaps:
           - jsonPath: $.vendor.status
           - jsonPath: $.vendor.agencyType
           - jsonPath: $.vendor.paymentPreference
+          - jsonPath: $.vendor.zoneIds
+            type: JSON
+            dbType: JSONB
+          - jsonPath: $.vendor.clusterIds
+            type: JSON
+            dbType: JSONB
+          - jsonPath: $.vendor.contractStartDate
+          - jsonPath: $.vendor.contractEndDate
           - jsonPath: $.vendor.auditDetails.createdBy
           - jsonPath: $.vendor.auditDetails.lastModifiedBy
           - jsonPath: $.vendor.auditDetails.createdTime
@@ -460,5 +488,117 @@ serviceMaps:
          - jsonPath: $.vendorWorkOrder.fillingStationId
          - jsonPath: $.vendorWorkOrder.fileStoreId
          - jsonPath: $.vendorWorkOrder.id
+   # ============================================================
+   # SUPERVISOR — CREATE
+   # ============================================================
+ - version: 1.0
+   description: Save Supervisor in eg_supervisor table
+   fromTopic: save-supervisor-application
+   isTransaction: true
+   queryMaps:
 
-         
+     - query: INSERT INTO eg_supervisor(id, name, tenantid, vendor_id, mobile_no, assigned_zone_id, additionaldetails, owner_id, description, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+       basePath: supervisor
+       jsonMaps:
+         - jsonPath: $.supervisor.id
+         - jsonPath: $.supervisor.name
+         - jsonPath: $.supervisor.tenantId
+         - jsonPath: $.supervisor.vendorId
+         - jsonPath: $.supervisor.mobileNo
+         - jsonPath: $.supervisor.assignedZoneId
+         - jsonPath: $.supervisor.additionalDetails
+           type: JSON
+           dbType: JSONB
+         - jsonPath: $.supervisor.ownerId
+         - jsonPath: $.supervisor.description
+         - jsonPath: $.supervisor.status
+         - jsonPath: $.supervisor.auditDetails.createdBy
+         - jsonPath: $.supervisor.auditDetails.lastModifiedBy
+         - jsonPath: $.supervisor.auditDetails.createdTime
+         - jsonPath: $.supervisor.auditDetails.lastModifiedTime
+
+
+   # ============================================================
+   # SUPERVISOR — UPDATE
+   # ============================================================
+ - version: 1.0
+   description: Update Supervisor in eg_supervisor table
+   fromTopic: update-supervisor-application
+   isTransaction: true
+   queryMaps:
+
+     - query: UPDATE eg_supervisor SET name=?, vendor_id=?, mobile_no=?, assigned_zone_id=?, additionaldetails=?, owner_id=?, description=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id=? AND tenantid=?;
+       basePath: supervisor
+       jsonMaps:
+         - jsonPath: $.supervisor.name
+         - jsonPath: $.supervisor.vendorId
+         - jsonPath: $.supervisor.mobileNo
+         - jsonPath: $.supervisor.assignedZoneId
+         - jsonPath: $.supervisor.additionalDetails
+           type: JSON
+           dbType: JSONB
+         - jsonPath: $.supervisor.ownerId
+         - jsonPath: $.supervisor.description
+         - jsonPath: $.supervisor.status
+         - jsonPath: $.supervisor.auditDetails.lastModifiedBy
+         - jsonPath: $.supervisor.auditDetails.lastModifiedTime
+         - jsonPath: $.supervisor.id
+         - jsonPath: $.supervisor.tenantId
+
+
+   # ============================================================
+   # SURVEYOR — CREATE
+   # ============================================================
+ - version: 1.0
+   description: Save Surveyor in eg_surveyor table
+   fromTopic: save-surveyor-application
+   isTransaction: true
+   queryMaps:
+
+     - query: INSERT INTO eg_surveyor(id, name, tenantid, vendor_id, mobile_no, supervisor_id, additionaldetails, owner_id, description, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+       basePath: surveyor
+       jsonMaps:
+         - jsonPath: $.surveyor.id
+         - jsonPath: $.surveyor.name
+         - jsonPath: $.surveyor.tenantId
+         - jsonPath: $.surveyor.vendorId
+         - jsonPath: $.surveyor.mobileNo
+         - jsonPath: $.surveyor.supervisorId
+         - jsonPath: $.surveyor.additionalDetails
+           type: JSON
+           dbType: JSONB
+         - jsonPath: $.surveyor.ownerId
+         - jsonPath: $.surveyor.description
+         - jsonPath: $.surveyor.status
+         - jsonPath: $.surveyor.auditDetails.createdBy
+         - jsonPath: $.surveyor.auditDetails.lastModifiedBy
+         - jsonPath: $.surveyor.auditDetails.createdTime
+         - jsonPath: $.surveyor.auditDetails.lastModifiedTime
+
+
+   # ============================================================
+   # SURVEYOR — UPDATE
+   # ============================================================
+ - version: 1.0
+   description: Update Surveyor in eg_surveyor table
+   fromTopic: update-surveyor-application
+   isTransaction: true
+   queryMaps:
+
+     - query: UPDATE eg_surveyor SET name=?, vendor_id=?, mobile_no=?, supervisor_id=?, additionaldetails=?, owner_id=?, description=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id=? AND tenantid=?;
+       basePath: surveyor
+       jsonMaps:
+         - jsonPath: $.surveyor.name
+         - jsonPath: $.surveyor.vendorId
+         - jsonPath: $.surveyor.mobileNo
+         - jsonPath: $.surveyor.supervisorId
+         - jsonPath: $.surveyor.additionalDetails
+           type: JSON
+           dbType: JSONB
+         - jsonPath: $.surveyor.ownerId
+         - jsonPath: $.surveyor.description
+         - jsonPath: $.surveyor.status
+         - jsonPath: $.surveyor.auditDetails.lastModifiedBy
+         - jsonPath: $.surveyor.auditDetails.lastModifiedTime
+         - jsonPath: $.surveyor.id
+         - jsonPath: $.surveyor.tenantId
