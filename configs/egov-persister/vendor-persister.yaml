@@ -227,12 +227,13 @@ serviceMaps:
           - jsonPath: $.vendor.drivers.*.auditDetails.lastModifiedTime
           - jsonPath: $.vendor.drivers.*.id
           
+
        - query: UPDATE EG_VENDOR_DRIVER SET vendor_id= ?, vendorDriverStatus= ? WHERE DRIVER_ID= ? ;
          basePath: vendor.drivers.*
          jsonMaps:
-          - jsonPath: $.vendor.id
-          - jsonPath: $.vendor.drivers.*.vendorDriverStatus
-          - jsonPath: $.vendor.drivers.*.id
+           - jsonPath: $.vendor.id
+           - jsonPath: $.vendor.drivers.*.vendorDriverStatus
+           - jsonPath: $.vendor.drivers.*.id
                     
        - query: UPDATE eg_vendor_vehicle SET vendor_id= ?,vendorVehicleStatus= ? WHERE VECHILE_ID= ? ;
          basePath: vendor.vehicles.*
@@ -403,7 +404,24 @@ serviceMaps:
           - jsonPath: $.driver.auditDetails.lastModifiedTime
           - jsonPath: $.driver.id
 
-          
+ - version: 1.0
+   description: Save Vendor Driver Mapping
+   fromTopic: save-vendordrivermapping-application
+   isTransaction: true
+   queryMaps:
+
+     - query: >
+         INSERT INTO eg_vendor_driver(vendor_id, driver_id, vendordriverstatus)
+         VALUES (?, ?, ?)
+         ON CONFLICT (driver_id)
+         DO UPDATE SET
+           vendor_id = EXCLUDED.vendor_id,
+           vendordriverstatus = EXCLUDED.vendordriverstatus;
+       basePath: vendor.drivers.*
+       jsonMaps:
+         - jsonPath: $.vendor.id
+         - jsonPath: $.vendor.drivers.*.id
+         - jsonPath: $.vendor.drivers.*.vendorDriverStatus
   
  - version: 1.0
    description: "Persists Vendor Work Order"
