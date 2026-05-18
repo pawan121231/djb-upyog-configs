@@ -693,11 +693,10 @@ serviceMaps:
       fromTopic: update-filling-point
       isTransaction: true
       queryMaps:
-        - query: UPDATE public.upyog_rs_water_tanker_filling_point SET filling_point_name = ?, emergency_name = ?, ee_name = ?, ee_email = ?, ee_mobile = ?, ae_name = ?, ae_email = ?, ae_mobile = ?, je_name = ?, je_email = ?, je_mobile = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE id = ?;
+        - query: UPDATE public.upyog_rs_water_tanker_filling_point SET filling_point_name = ?, ee_name = ?, ee_email = ?, ee_mobile = ?, ae_name = ?, ae_email = ?, ae_mobile = ?, je_name = ?, je_email = ?, je_mobile = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE id = ?;
           basePath: fillingPoint
           jsonMaps:
             - jsonPath: $.fillingPoint.fillingPointName
-            - jsonPath: $.fillingPoint.emergencyName
             - jsonPath: $.fillingPoint.eeName
             - jsonPath: $.fillingPoint.eeEmail
             - jsonPath: $.fillingPoint.eeMobile
