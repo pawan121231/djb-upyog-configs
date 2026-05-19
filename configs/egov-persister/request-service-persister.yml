@@ -616,9 +616,11 @@ serviceMaps:
               lastmodifiedby,
               createdtime,
               lastmodifiedtime,
-              filling_point_id
+              filling_point_id,
+              fixed_point_name,
+              fixed_point_id
             ) VALUES (
-              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
             )
           basePath: fixedPointDetailsList.*
           jsonMaps:
@@ -642,6 +644,8 @@ serviceMaps:
             - jsonPath: $.fixedPointDetailsList.*.audit_details.createdTime
             - jsonPath: $.fixedPointDetailsList.*.audit_details.lastModifiedTime
             - jsonPath: $.fixedPointDetailsList.*.fillingPointId
+            - jsonPath: $.fixedPointDetailsList.*.fixed_point_name
+            - jsonPath: $.fixedPointDetailsList.*.fixed_point_id
 
 
     - version: 1.0
@@ -666,7 +670,9 @@ serviceMaps:
               vehicle_id = ?,
               lastmodifiedby = ?,
               lastmodifiedtime = ?,
-              filling_point_id = ?
+              filling_point_id = ?,
+              fixed_point_name = ?,
+              fixed_point_id = ?
             WHERE system_assigned_schedule_id = ?
           basePath: fixedPointDetailsList.*
           jsonMaps:
@@ -686,6 +692,8 @@ serviceMaps:
             - jsonPath: $.fixedPointDetailsList.*.audit_details.lastModifiedTime
             - jsonPath: $.fixedPointDetailsList.*.system_assigned_schedule_id
             - jsonPath: $.fixedPointDetailsList.*.fillingPointId
+            - jsonPath: $.fixedPointDetailsList.*.fixed_point_name
+            - jsonPath: $.fixedPointDetailsList.*.fixed_point_id
 
 
     - version: 1.0
