@@ -113,10 +113,10 @@ serviceMaps:
             - jsonPath: $.waterTankerBookingDetail.applicationType
         - query: |
                           INSERT INTO public.upyog_rs_water_tanker_applicant_details(
-                          applicant_id, booking_id, name, mobile_number, email_id, alternate_number,
+                          applicant_id, name, mobile_number, email_id, alternate_number,
                           createdby, lastModifiedby, createdtime, lastmodifiedtime,type,fixed_point_id
                           )
-                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                           ON CONFLICT (applicant_id)
                           DO UPDATE SET
                           name = EXCLUDED.name,
@@ -130,7 +130,6 @@ serviceMaps:
           basePath: waterTankerBookingDetail.applicantDetail
           jsonMaps:
             - jsonPath: $.waterTankerBookingDetail.applicantDetail.applicantId
-            - jsonPath: $.waterTankerBookingDetail.applicantDetail.bookingId
             - jsonPath: $.waterTankerBookingDetail.applicantDetail.name
             - jsonPath: $.waterTankerBookingDetail.applicantDetail.mobileNumber
             - jsonPath: $.waterTankerBookingDetail.applicantDetail.emailId
@@ -191,17 +190,91 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.waterTankerBookingDetail.bookingId
 
+
+    - version: 1.0
+      description: Persists water tanker application detail
+      fromTopic: create-water-tanker-emergency-booking
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO public.upyog_rs_water_tanker_booking_details(booking_id, booking_no, tenant_id, address_detail_id, mobile_number, tanker_type, water_type, tanker_quantity, water_quantity, description, applicant_uuid, delivery_date, delivery_time, extra_charge, vendor_id, vehicle_id, driver_id, vehicle_type, vehicle_capacity, booking_createdby, booking_status, locality_code,wt_file_store_id, createdby, lastModifiedby, createdtime, lastmodifiedtime,applicant_id,filling_point_id,application_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::DATE, ?::TIME, ?, ?, ?, ?, ?, ?, LEFT(?,64), ?, ?, ?, ?, ?, ?,?,?,?,?)
+            ON CONFLICT (booking_id)
+            DO UPDATE SET
+            booking_no = EXCLUDED.booking_no,
+            tenant_id = EXCLUDED.tenant_id,
+            address_detail_id = EXCLUDED.address_detail_id,
+            mobile_number = EXCLUDED.mobile_number,
+            tanker_type = EXCLUDED.tanker_type,
+            water_type = EXCLUDED.water_type,
+            tanker_quantity = EXCLUDED.tanker_quantity,
+            water_quantity = EXCLUDED.water_quantity,
+            description = EXCLUDED.description,
+            applicant_uuid = EXCLUDED.applicant_uuid,
+            delivery_date = EXCLUDED.delivery_date,
+            delivery_time = EXCLUDED.delivery_time,
+            extra_charge = EXCLUDED.extra_charge,
+            vendor_id = EXCLUDED.vendor_id,
+            vehicle_id = EXCLUDED.vehicle_id,
+            driver_id = EXCLUDED.driver_id,
+            vehicle_type = EXCLUDED.vehicle_type,
+            vehicle_capacity = EXCLUDED.vehicle_capacity,
+            booking_createdby = EXCLUDED.booking_createdby,
+            booking_status = EXCLUDED.booking_status,
+            locality_code = EXCLUDED.locality_code,
+            wt_file_store_id = EXCLUDED.wt_file_store_id,
+            lastModifiedby = EXCLUDED.lastModifiedby,
+            lastmodifiedtime = EXCLUDED.lastmodifiedtime,
+            applicant_id = EXCLUDED.applicant_id,
+            filling_point_id=EXCLUDED.filling_point_id;
+
+          basePath: waterTankerBookingDetail
+          jsonMaps:
+            - jsonPath: $.waterTankerBookingDetail.bookingId
+            - jsonPath: $.waterTankerBookingDetail.bookingNo
+            - jsonPath: $.waterTankerBookingDetail.tenantId
+            - jsonPath: $.waterTankerBookingDetail.addressDetailId
+            - jsonPath: $.waterTankerBookingDetail.mobileNumber
+            - jsonPath: $.waterTankerBookingDetail.tankerType
+            - jsonPath: $.waterTankerBookingDetail.waterType
+            - jsonPath: $.waterTankerBookingDetail.tankerQuantity
+            - jsonPath: $.waterTankerBookingDetail.waterQuantity
+            - jsonPath: $.waterTankerBookingDetail.description
+            - jsonPath: $.waterTankerBookingDetail.applicantUuid
+            - jsonPath: $.waterTankerBookingDetail.deliveryDate
+            - jsonPath: $.waterTankerBookingDetail.deliveryTime
+            - jsonPath: $.waterTankerBookingDetail.extraCharge
+            - jsonPath: $.waterTankerBookingDetail.vendorId
+            - jsonPath: $.waterTankerBookingDetail.vehicleId
+            - jsonPath: $.waterTankerBookingDetail.driverId
+            - jsonPath: $.waterTankerBookingDetail.vehicleType
+            - jsonPath: $.waterTankerBookingDetail.vehicleCapacity
+            - jsonPath: $.waterTankerBookingDetail.bookingCreatedBy
+            - jsonPath: $.waterTankerBookingDetail.bookingStatus
+            - jsonPath: $.waterTankerBookingDetail.localityCode
+            - jsonPath: $.waterTankerBookingDetail.WTfileStoreId
+            - jsonPath: $.waterTankerBookingDetail.auditDetails.createdBy
+            - jsonPath: $.waterTankerBookingDetail.auditDetails.lastModifiedBy
+            - jsonPath: $.waterTankerBookingDetail.auditDetails.createdTime
+            - jsonPath: $.waterTankerBookingDetail.auditDetails.lastModifiedTime
+            - jsonPath: $.waterTankerBookingDetail.applicantId
+            - jsonPath: $.waterTankerBookingDetail.fillingPointId
+            - jsonPath: $.waterTankerBookingDetail.applicationType
+        
+        - query: INSERT INTO public.upyog_rs_water_tanker_booking_details_auditdetails SELECT * FROM public.upyog_rs_water_tanker_booking_details WHERE booking_id = ?;
+          basePath: waterTankerBookingDetail
+          jsonMaps:
+            - jsonPath: $.waterTankerBookingDetail.bookingId
+
+
     - version: 1.0
       description: Persists water tanker application fixed point detail with user profile
       fromTopic: create-fixed-point-water-tanker-booking-with-profile
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO public.upyog_rs_water_tanker_applicant_details(applicant_id, booking_id, name, mobile_number, email_id, alternate_number, createdby, lastModifiedby, createdtime, lastmodifiedtime, type, fixed_point_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO public.upyog_rs_water_tanker_applicant_details(applicant_id, name, mobile_number, email_id, alternate_number, createdby, lastModifiedby, createdtime, lastmodifiedtime, type, fixed_point_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: waterTankerBookingDetail.applicantDetail
           jsonMaps:
             - jsonPath: $.waterTankerBookingDetail.applicantDetail.applicantId
-            - jsonPath: $.waterTankerBookingDetail.applicantDetail.bookingId
             - jsonPath: $.waterTankerBookingDetail.applicantDetail.name
             - jsonPath: $.waterTankerBookingDetail.applicantDetail.mobileNumber
             - jsonPath: $.waterTankerBookingDetail.applicantDetail.emailId
@@ -247,11 +320,10 @@ serviceMaps:
       fromTopic: create-fixed-point-water-tanker-booking
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO public.upyog_rs_water_tanker_applicant_details(applicant_id, booking_id, name, mobile_number, email_id, alternate_number, createdby, lastModifiedby, createdtime, lastmodifiedtime,type,fixed_point_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO public.upyog_rs_water_tanker_applicant_details(applicant_id, name, mobile_number, email_id, alternate_number, createdby, lastModifiedby, createdtime, lastmodifiedtime,type,fixed_point_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: waterTankerBookingDetail.applicantDetail
           jsonMaps:
             - jsonPath: $.waterTankerBookingDetail.applicantDetail.applicantId
-            - jsonPath: $.waterTankerBookingDetail.applicantDetail.bookingId
             - jsonPath: $.waterTankerBookingDetail.applicantDetail.name
             - jsonPath: $.waterTankerBookingDetail.applicantDetail.mobileNumber
             - jsonPath: $.waterTankerBookingDetail.applicantDetail.emailId
