@@ -116,7 +116,7 @@ serviceMaps:
                           applicant_id, booking_id, name, mobile_number, email_id, alternate_number,
                           createdby, lastModifiedby, createdtime, lastmodifiedtime,type,fixed_point_id
                           )
-                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
                           ON CONFLICT (applicant_id)
                           DO UPDATE SET
                           name = EXCLUDED.name,
@@ -363,7 +363,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
         - query: UPDATE public.upyog_rs_water_tanker_booking_details SET booking_status = ?, vendor_id = ?, vehicle_id = ?, driver_id = ?, payment_receipt_filestore_id = ?, createdby = ?, lastmodifiedby = ?, lastmodifiedtime = ?, tanker_quantity=?,water_quantity=?,
-               delivery_date = ?::date, delivery_time = ?::time, vehicle_capacity=?, filling_point_id = ?, vehicle_type=? WHERE booking_id = ?;
+            delivery_date = ?::date, delivery_time = ?::time, vehicle_capacity=?, filling_point_id = ?, vehicle_type=? WHERE booking_id = ?;
           basePath: waterTankerBookingDetail
           jsonMaps:
             - jsonPath: $.waterTankerBookingDetail.bookingStatus
@@ -690,10 +690,11 @@ serviceMaps:
             - jsonPath: $.fixedPointDetailsList.*.vehicle_id
             - jsonPath: $.fixedPointDetailsList.*.audit_details.lastModifiedBy
             - jsonPath: $.fixedPointDetailsList.*.audit_details.lastModifiedTime
-            - jsonPath: $.fixedPointDetailsList.*.system_assigned_schedule_id
             - jsonPath: $.fixedPointDetailsList.*.fillingPointId
             - jsonPath: $.fixedPointDetailsList.*.fixed_point_name
             - jsonPath: $.fixedPointDetailsList.*.fixed_point_id
+            - jsonPath: $.fixedPointDetailsList.*.system_assigned_schedule_id
+
 
 
     - version: 1.0
