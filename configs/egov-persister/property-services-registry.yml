@@ -18,7 +18,7 @@ serviceMaps:
         type: JSON
         dbType: JSONB
 
-    - query: INSERT INTO eg_pt_property (id, propertyid, tenantid, surveyid, accountid, oldpropertyid, status, acknowldgementnumber, propertytype, ownershipcategory, usagecategory, creationreason, nooffloors, landarea, superbuiltuparea, linkedproperties, source,  channel, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails, zro_location) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pt_property (id, propertyid, tenantid, surveyid, accountid, oldpropertyid, status, acknowldgementnumber, propertytype, ownershipcategory, usagecategory, creationreason, nooffloors, landarea, superbuiltuparea, linkedproperties, source,  channel, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: Property
       jsonMaps:
 
@@ -71,8 +71,6 @@ serviceMaps:
       - jsonPath: $.Property.additionalDetails
         type: JSON
         dbType: JSONB
-
-      - jsonPath: $.Property.zroLocation
 
 
     - query: INSERT INTO eg_pt_owner(ownerinfouuid, tenantid, propertyid, userid, status, isprimaryowner, ownertype, ownershippercentage, institutionid, relationship, createdby, createdtime, lastmodifiedby, lastmodifiedtime,additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);
@@ -193,7 +191,7 @@ serviceMaps:
       - jsonPath: $.Property.auditDetails.lastModifiedTime
 
 
-    - query: INSERT INTO eg_pt_address(tenantid, id, propertyid, doorno, plotno, buildingname, street, landmark, city, pincode, locality, district, region, state, country, latitude, longitude, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pt_address(tenantid, id, propertyid, doorno, plotno, buildingname, street, landmark, city, pincode, locality, district, region, state, country, latitude, longitude, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails, zro_location) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: Property.address
       jsonMaps:
 
@@ -242,6 +240,8 @@ serviceMaps:
       - jsonPath: $.Property.address.additionalDetails
         type: JSON
         dbType: JSONB
+
+      - jsonPath: $.Property.address.zroLocation
 
 
     - query: INSERT INTO eg_pt_unit(id, tenantid, propertyid, floorno, unittype, usagecategory, occupancytype, occupancydate, carpetarea, builtuparea, plintharea, superbuiltuparea, arv, constructiontype, constructiondate, dimensions, active, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -309,7 +309,7 @@ serviceMaps:
         type: JSON
         dbType: JSONB
 
-    - query: UPDATE eg_pt_property SET propertyid=?,  surveyid=?, accountid=?, oldpropertyid=?, status=?, propertytype=?, ownershipcategory=?, usagecategory=?, nooffloors=?, landarea=?,   superbuiltuparea=?, linkedproperties=?, lastmodifiedby=?, lastmodifiedtime=?, additionaldetails=?, zro_location=? WHERE Id=? AND tenantId=?;
+    - query: UPDATE eg_pt_property SET propertyid=?,  surveyid=?, accountid=?, oldpropertyid=?, status=?, propertytype=?, ownershipcategory=?, usagecategory=?, nooffloors=?, landarea=?,   superbuiltuparea=?, linkedproperties=?, lastmodifiedby=?, lastmodifiedtime=?, additionaldetails=? WHERE Id=? AND tenantId=?;
       basePath: Property
       jsonMaps:
 
@@ -344,8 +344,6 @@ serviceMaps:
       - jsonPath: $.Property.additionalDetails
         type: JSON
         dbType: JSONB
-
-      - jsonPath: $.Property.zroLocation
 
       - jsonPath: $.Property.id
 
@@ -436,7 +434,7 @@ serviceMaps:
 
       - jsonPath: $.Property.auditDetails.lastModifiedTime
 
-    - query: UPDATE eg_pt_address SET doorno=?, plotno=?, buildingname=?, street=?, landmark=?, city=?, pincode=?, locality=?, district=?, region=?, state=?, country=?, latitude=?, longitude=?, lastmodifiedby=?, lastmodifiedtime=?, additionaldetails=? WHERE id=?;
+    - query: UPDATE eg_pt_address SET doorno=?, plotno=?, buildingname=?, street=?, landmark=?, city=?, pincode=?, locality=?, district=?, region=?, state=?, country=?, latitude=?, longitude=?, lastmodifiedby=?, lastmodifiedtime=?, additionaldetails=?, zro_location=? WHERE id=?;
       basePath: Property.address
       jsonMaps:
 
@@ -475,6 +473,8 @@ serviceMaps:
       - jsonPath: $.Property.address.additionalDetails
         type: JSON
         dbType: JSONB
+
+      - jsonPath: $.Property.address.zroLocation
 
       - jsonPath: $.Property.address.id
 
