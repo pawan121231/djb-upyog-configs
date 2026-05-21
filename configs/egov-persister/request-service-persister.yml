@@ -480,6 +480,36 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.waterTankerBookingDetail.bookingId
 
+    - version: 1.0
+      description: Update water tanker emergency application detail
+      fromTopic: update-water-tanker-emergency-booking
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE upyog_rs_water_tanker_booking_details SET booking_status = ?, vendor_id = ?, vehicle_id = ?, driver_id = ?, payment_receipt_filestore_id = ?, createdby = ?, lastmodifiedby = ?, lastmodifiedtime = ?, tanker_quantity=?,water_quantity=?,
+               delivery_date = ?::date, delivery_time = ?::time, vehicle_capacity=?, filling_point_id = ?, vehicle_type=? WHERE booking_id = ?;
+          basePath: waterTankerBookingDetail
+          jsonMaps:
+            - jsonPath: $.waterTankerBookingDetail.bookingStatus
+            - jsonPath: $.waterTankerBookingDetail.vendorId
+            - jsonPath: $.waterTankerBookingDetail.vehicleId
+            - jsonPath: $.waterTankerBookingDetail.driverId
+            - jsonPath: $.waterTankerBookingDetail.paymentReceiptFilestoreId
+            - jsonPath: $.waterTankerBookingDetail.auditDetails.createdBy
+            - jsonPath: $.waterTankerBookingDetail.auditDetails.lastModifiedBy
+            - jsonPath: $.waterTankerBookingDetail.auditDetails.lastModifiedTime
+            - jsonPath: $.waterTankerBookingDetail.tankerQuantity
+            - jsonPath: $.waterTankerBookingDetail.waterQuantity
+            - jsonPath: $.waterTankerBookingDetail.deliveryDate
+            - jsonPath: $.waterTankerBookingDetail.deliveryTime
+            - jsonPath: $.waterTankerBookingDetail.vehicleCapacity
+            - jsonPath: $.waterTankerBookingDetail.fillingPointId
+            - jsonPath: $.waterTankerBookingDetail.vehicleType
+            - jsonPath: $.waterTankerBookingDetail.bookingId
+
+        - query: INSERT INTO public.upyog_rs_water_tanker_booking_details_auditdetails SELECT * FROM public.upyog_rs_water_tanker_booking_details WHERE booking_id = ?;
+          basePath: waterTankerBookingDetail
+          jsonMaps:
+            - jsonPath: $.waterTankerBookingDetail.bookingId
 
     - version: 1.0
       description: Persists mobile toilet booking detail
