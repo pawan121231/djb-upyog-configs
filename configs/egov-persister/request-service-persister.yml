@@ -792,10 +792,10 @@ serviceMaps:
             - jsonPath: $.fixedPointDetailsList.*.vehicle_id
             - jsonPath: $.fixedPointDetailsList.*.audit_details.lastModifiedBy
             - jsonPath: $.fixedPointDetailsList.*.audit_details.lastModifiedTime
-            - jsonPath: $.fixedPointDetailsList.*.system_assigned_schedule_id
             - jsonPath: $.fixedPointDetailsList.*.fillingPointId
             - jsonPath: $.fixedPointDetailsList.*.fixed_point_name
             - jsonPath: $.fixedPointDetailsList.*.fixed_point_id
+            - jsonPath: $.fixedPointDetailsList.*.system_assigned_schedule_id
 
 
     - version: 1.0
