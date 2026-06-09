@@ -191,7 +191,7 @@ serviceMaps:
       - jsonPath: $.Property.auditDetails.lastModifiedTime
 
 
-    - query: INSERT INTO eg_pt_address(tenantid, id, propertyid, doorno, plotno, buildingname, street, landmark, city, pincode, locality, district, region, state, country, latitude, longitude, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails, zro_location,sub_locality,ward_remark) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pt_address(tenantid, id, propertyid, doorno, plotno, buildingname, street, landmark, city, pincode, locality, district, region, state, country, latitude, longitude, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails, zro_location,sub_locality,actual_ward, actual_zone, actual_assembly) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: Property.address
       jsonMaps:
 
@@ -245,7 +245,11 @@ serviceMaps:
 
       - jsonPath: $.Property.address.subLocality
 
-      - jsonPath: $.Property.address.wardRemark
+      - jsonPath: $.Property.address.actualWard
+
+      - jsonPath: $.Property.address.actualZone
+
+      - jsonPath: $.Property.address.actualAssembly
 
     - query: INSERT INTO eg_pt_unit(id, tenantid, propertyid, floorno, unittype, usagecategory, occupancytype, occupancydate, carpetarea, builtuparea, plintharea, superbuiltuparea, arv, constructiontype, constructiondate, dimensions, active, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: Property.units.*
@@ -437,7 +441,7 @@ serviceMaps:
 
       - jsonPath: $.Property.auditDetails.lastModifiedTime
 
-    - query: UPDATE eg_pt_address SET doorno=?, plotno=?, buildingname=?, street=?, landmark=?, city=?, pincode=?, locality=?, district=?, region=?, state=?, country=?, latitude=?, longitude=?, lastmodifiedby=?, lastmodifiedtime=?, additionaldetails=?, zro_location=?,sub_locality = ?, ward_remark= ? WHERE id=?;
+    - query: UPDATE eg_pt_address SET doorno=?, plotno=?, buildingname=?, street=?, landmark=?, city=?, pincode=?, locality=?, district=?, region=?, state=?, country=?, latitude=?, longitude=?, lastmodifiedby=?, lastmodifiedtime=?, additionaldetails=?, zro_location=?,sub_locality = ?, actual_ward= ?, actual_zone =?, actual_assembly = ? WHERE id=?;
       basePath: Property.address
       jsonMaps:
 
@@ -483,7 +487,11 @@ serviceMaps:
 
       - jsonPath: $.Property.address.subLocality
 
-      - jsonPath: $.Property.address.wardRemark
+      - jsonPath: $.Property.address.actualWard
+
+      - jsonPath: $.Property.address.actualZone
+
+      - jsonPath: $.Property.address.actualAssembly
 
     - query: INSERT INTO eg_pt_institution (id, propertyid, tenantid, name, nameofauthorizedperson, type, designation, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, type=EXCLUDED.type, designation=EXCLUDED.designation, lastmodifiedby=EXCLUDED.lastModifiedby, lastmodifiedtime=EXCLUDED.lastmodifiedtime;
       basePath: $.Property.institution
