@@ -238,7 +238,7 @@ serviceMaps:
        - jsonPath: $.WaterConnection.id
        
 
-    - query: INSERT INTO eg_ws_applicationDocument(id, tenantId, documenttype, filestoreid, wsid, active, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET active = ?, documenttype =?, filestoreid =?,lastmodifiedby =?, lastmodifiedtime =?;
+    - query: INSERT INTO eg_ws_applicationDocument(id, tenantId, documenttype, filestoreid, wsid, active, is_verified, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET active = ?, documenttype =?, filestoreid =?,is_verified =?, lastmodifiedby =?, lastmodifiedtime =?;
       basePath: $.WaterConnection.documents.*
       jsonMaps:
          
@@ -254,6 +254,8 @@ serviceMaps:
 
           - jsonPath: $.WaterConnection.documents.*.status
 
+          - jsonPath: $.WaterConnection.documents.*.isVerified
+          
           - jsonPath: $.WaterConnection.documents.*.auditDetails.createdBy
 
           - jsonPath: $.WaterConnection.documents.*.auditDetails.lastModifiedBy
