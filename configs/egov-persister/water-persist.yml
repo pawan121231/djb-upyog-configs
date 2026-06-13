@@ -97,7 +97,7 @@ serviceMaps:
        - jsonPath: $.WaterConnection.disconnectionExecutionDate
        
    
-    - query: INSERT INTO eg_ws_connectionholder(tenantid, connectionid, userid, status, isprimaryholder, connectionholdertype, holdershippercentage, relationship, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_ws_connectionholder(tenantid, connectionid, userid, status, isprimaryholder, connectionholdertype, holdershippercentage, relationship, middlename, lastname, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: $.WaterConnection.connectionHolders.*
       jsonMaps:      
 
@@ -116,6 +116,10 @@ serviceMaps:
        - jsonPath: $.WaterConnection.connectionHolders.*.ownerShipPercentage
 
        - jsonPath: $.WaterConnection.connectionHolders.*.relationship
+
+       - jsonPath: $.WaterConnection.connectionHolders.*.middleName
+
+       - jsonPath: $.WaterConnection.connectionHolders.*.lastName
 
        - jsonPath: $.WaterConnection.auditDetails.createdBy
 
@@ -324,7 +328,7 @@ serviceMaps:
 
           - jsonPath: $.WaterConnection.plumberInfo.*.auditDetails.lastModifiedTime
 
-    - query: INSERT INTO eg_ws_connectionholder(tenantid, connectionid, userid, status, isprimaryholder, connectionholdertype, holdershippercentage, relationship, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (connectionid) DO UPDATE SET tenantid =?, userid =?,status =?, isprimaryholder =?, connectionholdertype =?, holdershippercentage =?, relationship=?, lastmodifiedby =?, lastmodifiedtime =?;
+    - query: INSERT INTO eg_ws_connectionholder(tenantid, connectionid, userid, status, isprimaryholder, connectionholdertype, holdershippercentage, relationship, middlename, lastname, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (connectionid) DO UPDATE SET tenantid =?, userid =?,status =?, isprimaryholder =?, connectionholdertype =?, holdershippercentage =?, relationship=?, middlename=?, lastname=?, lastmodifiedby =?, lastmodifiedtime =?;
       basePath: $.WaterConnection.connectionHolders.*
       jsonMaps:      
 
@@ -343,6 +347,10 @@ serviceMaps:
        - jsonPath: $.WaterConnection.connectionHolders.*.ownerShipPercentage
 
        - jsonPath: $.WaterConnection.connectionHolders.*.relationship
+
+       - jsonPath: $.WaterConnection.connectionHolders.*.middleName
+
+       - jsonPath: $.WaterConnection.connectionHolders.*.lastName
 
        - jsonPath: $.WaterConnection.auditDetails.createdBy
 
@@ -365,6 +373,10 @@ serviceMaps:
        - jsonPath: $.WaterConnection.connectionHolders.*.ownerShipPercentage
 
        - jsonPath: $.WaterConnection.connectionHolders.*.relationship
+
+       - jsonPath: $.WaterConnection.connectionHolders.*.middleName
+
+       - jsonPath: $.WaterConnection.connectionHolders.*.lastName
 
        - jsonPath: $.WaterConnection.auditDetails.lastModifiedBy
 
