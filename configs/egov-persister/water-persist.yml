@@ -274,6 +274,8 @@ serviceMaps:
 
           - jsonPath: $.WaterConnection.documents.*.fileStoreId
 
+          - jsonPath: $.WaterConnection.documents.*.isVerified
+
           - jsonPath: $.WaterConnection.documents.*.auditDetails.lastModifiedBy
 
           - jsonPath: $.WaterConnection.documents.*.auditDetails.lastModifiedTime
