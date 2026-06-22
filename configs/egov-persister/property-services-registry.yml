@@ -18,13 +18,70 @@ serviceMaps:
         type: JSON
         dbType: JSONB
 
-    - query: INSERT INTO eg_pt_property (id, propertyid, tenantid, surveyid, accountid, oldpropertyid, status, acknowldgementnumber, propertytype, ownershipcategory, usagecategory, creationreason, nooffloors, landarea, superbuiltuparea, linkedproperties, source,  channel, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pt_plot
+        (
+          id,
+          plotid,
+          tenantid,
+          plotno,
+          doorno,
+          buildingname,
+          street,
+          locality,
+          sub_locality,
+          addresshash,
+          createdby,
+          createdtime,
+          lastmodifiedby,
+          lastmodifiedtime
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT (tenantid, addresshash)
+        DO NOTHING;
+
+      basePath: Property.plot
+
+      jsonMaps:
+
+      - jsonPath: $.Property.plot.id
+
+      - jsonPath: $.Property.plot.plotId
+
+      - jsonPath: $.Property.plot.tenantId
+
+      - jsonPath: $.Property.plot.plotNo
+
+      - jsonPath: $.Property.plot.doorNo
+
+      - jsonPath: $.Property.plot.buildingName
+
+      - jsonPath: $.Property.plot.street
+
+      - jsonPath: $.Property.plot.locality
+
+      - jsonPath: $.Property.plot.subLocality
+
+      - jsonPath: $.Property.plot.addressHash
+
+      - jsonPath: $.Property.plot.auditDetails.createdBy
+
+      - jsonPath: $.Property.plot.auditDetails.createdTime
+
+      - jsonPath: $.Property.plot.auditDetails.lastModifiedBy
+
+      - jsonPath: $.Property.plot.auditDetails.lastModifiedTime
+
+
+
+    - query: INSERT INTO eg_pt_property (id, propertyid, plotid, tenantid, surveyid, accountid, oldpropertyid, status, acknowldgementnumber, propertytype, ownershipcategory, usagecategory, creationreason, nooffloors, landarea, superbuiltuparea, linkedproperties, source,  channel, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: Property
       jsonMaps:
 
       - jsonPath: $.Property.id
 
       - jsonPath: $.Property.propertyId
+
+      - jsonPath: $.Property.plotId
 
       - jsonPath: $.Property.tenantId
 
