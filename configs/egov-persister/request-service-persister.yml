@@ -646,7 +646,7 @@ serviceMaps:
       fromTopic: save-filling-point
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO public.upyog_rs_water_tanker_filling_point(id, tenant_id, filling_point_name, ee_name, ee_email, ee_mobile, ae_name, ae_email, ae_mobile, je_name, je_email, je_mobile, createdby, lastmodifiedby, createdtime, lastmodifiedtime, filling_point_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO public.upyog_rs_water_tanker_filling_point(id, tenant_id, filling_point_name, ee_name, ee_email, ee_mobile, ae_name, ae_email, ae_mobile, je_name, je_email, je_mobile, createdby, lastmodifiedby, createdtime, lastmodifiedtime, filling_point_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: fillingPoint
           jsonMaps:
             - jsonPath: $.fillingPoint.id
@@ -666,6 +666,7 @@ serviceMaps:
             - jsonPath: $.fillingPoint.createdTime
             - jsonPath: $.fillingPoint.lastModifiedTime
             - jsonPath: $.fillingPoint.fillingPointId
+            - jsonPath: $.fillingPoint.status
 
         - query: INSERT INTO public.upyog_rs_water_tanker_address_details(address_id, applicant_id, house_no, address_line_1, address_line_2, street_name, landmark, city, city_code, locality, locality_code, pincode, latitude, longitude, type, ward, zone, constituency) VALUES (?::uuid, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,? ,? ,?);
           basePath: fillingPoint
@@ -803,7 +804,7 @@ serviceMaps:
       fromTopic: update-filling-point
       isTransaction: true
       queryMaps:
-        - query: UPDATE public.upyog_rs_water_tanker_filling_point SET filling_point_name = ?, ee_name = ?, ee_email = ?, ee_mobile = ?, ae_name = ?, ae_email = ?, ae_mobile = ?, je_name = ?, je_email = ?, je_mobile = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE id = ?;
+        - query: UPDATE public.upyog_rs_water_tanker_filling_point SET filling_point_name = ?, ee_name = ?, ee_email = ?, ee_mobile = ?, ae_name = ?, ae_email = ?, ae_mobile = ?, je_name = ?, je_email = ?, je_mobile = ?, lastmodifiedby = ?, lastmodifiedtime = ?, status = ? WHERE id = ?;
           basePath: fillingPoint
           jsonMaps:
             - jsonPath: $.fillingPoint.fillingPointName
@@ -818,6 +819,7 @@ serviceMaps:
             - jsonPath: $.fillingPoint.jeMobile
             - jsonPath: $.fillingPoint.lastModifiedBy
             - jsonPath: $.fillingPoint.lastModifiedTime
+            - jsonPath: $.fillingPoint.status
             - jsonPath: $.fillingPoint.id
 
         - query: UPDATE public.upyog_rs_water_tanker_address_details SET house_no = ?, address_line_1 = ?, address_line_2 = ?, street_name = ?, landmark = ?, city = ?, city_code = ?, locality = ?, locality_code = ?, pincode = ?, latitude = ?, longitude = ?, type = ? WHERE applicant_id = ?;
